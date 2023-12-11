@@ -1,0 +1,104 @@
+package Analizadores;
+import java_cup.runtime.*;
+import java.util.ArrayList;
+
+parser code
+{:
+    public ArrayList<Automata> arboles = new ArrayList<>();
+    public void syntax_error(Symbol s) {
+            System.out.println("Error sintactico: "+s.value+", Linea " +(s.left+1)+" Columna " + (s.right+1));
+    }
+
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        System.out.println("Error sintactico NR: "+s.value+", Linea "+(s.left+1)+" Columna "+(s.right+1));
+    }    
+:}
+terminal String llaveA,
+llaveC, 
+CONJ,
+dbPto,
+ID,
+flecha,
+ptoComa,
+minus,
+mayus,
+nums,
+porcentaje,
+signos,
+virgulilla,
+coma,
+concatenacion,
+disyuncion,
+estrella,
+cerrPositiva,
+cerrBooleana,
+caracter,
+cadena;
+
+non terminal programa;
+non terminal segmentoA, segmentoB, segmentoA_varios, segmentoB_varios, notacion,
+notacionA, notacionB, exReg;
+
+
+
+start with programa;
+
+programa ::= llaveA segmentoA_varios segmentoB_varios llaveC;
+segmentoA_varios::= segmentoA_varios segmentoA | segmentoA;
+segmentoA::= CONJ dbPto ID flecha notacion ptoComa|CONJ dbPto ID flecha notacionA ptoComa|
+ID flecha exReg:a ptoComa {:
+    arboles.add(new Automata((Nodo_binario) a));
+:};
+
+notacion::= minus virgulilla minus |mayus virgulilla mayus
+|nums virgulilla nums | signos virgulilla signos;
+notacionA::=notacionA coma notacionB | notacionB;
+notacionB::=signos|nums|minus|mayus;
+
+
+exReg::= concatenacion:a exReg:b exReg:c{: 
+Nodo_binario padre = new Nodo_binario(a);
+padre.hijo_izq = (Nodo_binario) b;
+padre.hijo_der = (Nodo_binario) c;
+RESULT = padre;
+:}  
+|disyuncion:a exReg:b exReg:c {: 
+Nodo_binario padre = new Nodo_binario(a);
+padre.hijo_izq = (Nodo_binario) b;
+padre.hijo_der = (Nodo_binario) c;
+RESULT = padre;
+:} 
+|estrella:a exReg:b{: 
+Nodo_binario padre = new Nodo_binario(a);
+padre.hijo_der = (Nodo_binario) b;
+RESULT = padre;
+:}
+|cerrPositiva:a exReg:b{: 
+Nodo_binario padre = new Nodo_binario(a);
+padre.hijo_der = (Nodo_binario) b;
+RESULT = padre;
+:}
+|cerrBooleana:a exReg:b {: 
+Nodo_binario padre = new Nodo_binario(a);
+padre.hijo_der = (Nodo_binario) b;
+RESULT = padre;
+:}
+|caracter:a {: 
+Nodo_binario hoja = new Nodo_binario(a);
+// Es una hoja ----------------------------------------
+hoja.setHoja(true);
+// No es anulable el nodo
+hoja.setAnulable(false);
+RESULT = hoja;
+:}
+|llaveA ID:a llaveC {: 
+Nodo_binario hoja = new Nodo_binario(a);
+// Es una hoja ----------------------------------------
+hoja.setHoja(true);
+hoja.setAnulable(false);
+RESULT = hoja;
+:};
+
+segmentoB_varios::=segmentoB_varios segmentoB | segmentoB;
+segmentoB::= ID dbPto cadena ptoComa;
+
