@@ -43,7 +43,7 @@ notacionA, notacionB, exReg;
 
 start with programa;
 
-programa ::= llaveA segmentoA_varios segmentoB_varios llaveC;
+programa ::= llaveA segmentoA_varios llaveC;
 segmentoA_varios::= segmentoA_varios segmentoA | segmentoA;
 segmentoA::= CONJ dbPto ID flecha notacion ptoComa|CONJ dbPto ID flecha notacionA ptoComa|
 ID flecha exReg:a ptoComa {:

@@ -12,18 +12,18 @@ import java.util.ArrayList;
  */
 public class Nodo_binario {
     // Primeros
-    private ArrayList<Integer> primeros = new ArrayList<>();
+    public ArrayList<Integer> primeros = new ArrayList<>();
     // Ultimos
-    private ArrayList<Integer> ultimos = new ArrayList<>();
+    public ArrayList<Integer> ultimos = new ArrayList<>();
     
     public String dato;
-    private int identificador;
+    public int identificador;
     // Nodos individuales
     public Nodo_binario hijo_izq;
     public Nodo_binario hijo_der;
-    private boolean anulable;
+    public boolean anulable;
     // En caso de no tener hijos
-    private boolean hoja = false;
+    public boolean hoja = false;
     
 
     public Nodo_binario(String dato) {
